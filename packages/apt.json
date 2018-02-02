@@ -1,0 +1,59 @@
+{
+	"package_manager": "apt",
+	"install_cmd": "apt install -y",
+	"dry_run": "--dry-run",
+	"packages": [
+		{
+			"name": "htop"
+		},
+		{
+			"name": "build-essential"
+		},
+		{
+			"name": "git"
+		},
+		{
+			"name": "tor"
+		},
+		{
+			"name": "tor-arm"
+		},
+		{
+			"name": "chromium-browser"
+		},
+		{
+			"name": "vim"
+		},
+		{
+			"name": "sublime-text",
+			"prereq": ["sudo apt-key adv"]
+		},
+		{
+			"name": "zsh"
+		},
+		{
+			"name": "ufw"
+		},
+		{
+			"name": "nmap"
+		},
+		{
+			"name": "netcat"
+		},
+		{
+			"name": "sudo"
+		},
+		{
+			"name": "java-common"
+		},
+		{
+			"name": "default-jdk"
+		},
+		{
+			"name": "default-jre"
+		},
+		{
+			"name": "baobab"
+		}
+	]
+}
