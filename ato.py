@@ -29,7 +29,12 @@ def usage():
 def check_user(uid=1000):
     return os.getuid() == uid
 
+
 def check_permissions(target=755):
+    pass
+
+
+def filetype(filename):
     pass
 
 
@@ -68,7 +73,7 @@ def organize_dict(items, key, applicator=None):
 #-----------MAIN ENTRYPOINT------------------
 
 if __name__ == '__main__':
-    
+
     # check if we're running in testing mode
     if '-d' in sys.argv:
         dry_run = True
@@ -82,7 +87,7 @@ if __name__ == '__main__':
 
 
     # execute common package installations
-    
+
     for pack in packages:
         package = parse_json(PACKAGE_DIR + pack + PACKAGE_EXTENSION)
         manager, install_cmd, items, dry_cmd = (package['package_manager'],
@@ -102,6 +107,6 @@ if __name__ == '__main__':
     # installing applications from archives
     for arch in archives:
         archive = parse_json(CUSTOM_DIR + arch + PACKAGE_EXTENSION)
-        
-
-
+        working_dir = archive['working_dir']
+        if filetype(archive_location) == FILETYPES.TGZ:
+            pass
