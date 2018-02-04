@@ -10,7 +10,7 @@ import subprocess
 import sys
 
 #-----------PACKAGE IMPORTS------------------
-from globals import *
+from constants import *
 from helpers import Helpers as h
 
 
@@ -85,13 +85,4 @@ if __name__ == '__main__':
         custom_mod = import_module(CUSTOM_DIR + custom)
         Custom = getattr(custom_mod, custom.title())
         c = Custom()
-        c.run()
-
-        
-        custom  = h.parse_json(CUSTOM_DIR + c + PACKAGE_EXTENSION)
-        custom_base = custom['custom_base']
-        install_base = subarchive['install_base']
-        
-        archive_location = archive_base if  + arch['archive_location']
-        if h.filetype(archive_location) in FILETYPES.TGZ:
-            
+        c.run()            

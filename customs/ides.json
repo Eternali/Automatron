@@ -1,12 +1,12 @@
 {
 	"custom_base": "",
 	"install_base": "",
-	"IDES": [
+	"ides": [
 		{
 			"archive_location": "",
 			"install_location": "",
-			"config_save_location": "",
-			"config_install_location": ""
+			"config_origin": "",
+			"config_save": ""
 		}
 	]
 }
