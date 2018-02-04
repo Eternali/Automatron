@@ -1,41 +1,37 @@
+#!/usr/bin/python3
 '''
 
 '''
 
 #-----------PYTHON STANDARD IMPORTS----------
-import json
-# import operator
+from importlib import import_module
 import os
 import subprocess
 import sys
 
 #-----------PACKAGE IMPORTS------------------
-
-
-#-----------GLOBAL CONSTANTS-----------------
-PACKAGE_DIR = 'packages/'
-CUSTOM_DIR = 'customs/'
-PACKAGE_EXTENSION = '.json'
+from globals import *
+from helpers import Helpers as h
 
 
 #-----------HELPER FUNCTIONS-----------------
 
 def usage():
     print('''
-        ./ato.py [-p --packages] pack1 pack2
+        ./ato.py [-p --packages] pack1 pack2 [-c --customs] custom1:install_module1 custom2:install_module2
+
+            [-p --packages]  install packages from common package managers (e.g. apt, pacman, pip, npm)
+            [-c --customs]   install custom items from archives or other sources. The first item is the JSON
+                             file that specifies things like archive locations, configuration, and other data
+                             for the install. The second item is a python module you must provide to parse the 
+                             JSON file you provide.
+                             The python module must be a single class with the same name as the file and must
+                             contain a `run` method that will be called by ATO.
         ''')
 
 
 def check_user(uid=1000):
     return os.getuid() == uid
-
-
-def check_permissions(target=755):
-    pass
-
-
-def filetype(filename):
-    pass
 
 
 def get_named_args(aliases):
@@ -50,26 +46,6 @@ def get_named_args(aliases):
     return [argv[alias_idx[i]+1:alias_idx[i+1] if len(alias_idx) > i+1 else len(argv)] for i in range(len(alias_idx))]
 
 
-def parse_json(filename):
-    with open(filename, 'r') as fname:
-        loaded_file = fname.read()
-    file_dict = json.loads(loaded_file)
-    return file_dict
-
-
-def write_json(dict_to_encode, filename, separators=(',', ':')):
-    with open(filename, 'w') as fname:
-        fname.write(json.dumps(dict_to_encode, indent=2, separators=separators))
-
-
-def organize_dict(items, key, applicator=None):
-    sorted_dict = []
-    if applicator is None:
-        sorted_dict = sorted(items, key=lambda k: k[key])
-        # items.sort(key=operator.itemgetter('name'))
-    return sorted_dict
-
-
 #-----------MAIN ENTRYPOINT------------------
 
 if __name__ == '__main__':
@@ -81,15 +57,15 @@ if __name__ == '__main__':
     else:
         dry_run = False
 
-    packages, archives = get_named_args([('-p', '--packages'), ('-a', '--archives')])
+    packages, customs = get_named_args([('-p', '--packages'), ('-c', '--customs')])
     print(packages)
-    print(archives)
+    print(customs)
 
 
     # execute common package installations
 
     for pack in packages:
-        package = parse_json(PACKAGE_DIR + pack + PACKAGE_EXTENSION)
+        package = h.parse_json(PACKAGE_DIR + pack + PACKAGE_EXTENSION)
         manager, install_cmd, items, dry_cmd = (package['package_manager'],
                                                 package['install_cmd'],
                                                 package['packages'],
@@ -104,9 +80,18 @@ if __name__ == '__main__':
             raise Exception('Failed to complete installation of {}.'.format(manager))
 
 
-    # installing applications from archives
-    for arch in archives:
-        archive = parse_json(CUSTOM_DIR + arch + PACKAGE_EXTENSION)
-        working_dir = archive['working_dir']
-        if filetype(archive_location) == FILETYPES.TGZ:
-            pass
+    # load and run custom modules
+    for custom in customs:
+        custom_mod = import_module(CUSTOM_DIR + custom)
+        Custom = getattr(custom_mod, custom.title())
+        c = Custom()
+        c.run()
+
+        
+        custom  = h.parse_json(CUSTOM_DIR + c + PACKAGE_EXTENSION)
+        custom_base = custom['custom_base']
+        install_base = subarchive['install_base']
+        
+        archive_location = archive_base if  + arch['archive_location']
+        if h.filetype(archive_location) in FILETYPES.TGZ:
+            

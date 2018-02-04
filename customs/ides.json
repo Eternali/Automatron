@@ -1,5 +1,6 @@
 {
-	"working_dir": "",
+	"custom_base": "",
+	"install_base": "",
 	"IDES": [
 		{
 			"archive_location": "",

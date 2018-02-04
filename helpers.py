@@ -1,0 +1,45 @@
+'''
+Helpers contains only static methods that ATO or custom modules can import.
+
+(C) Conrad Heidebrecht (github.com/eternali) 03 February 2018
+'''
+
+import json
+import magic
+import os
+import stat
+
+
+class Helpers():
+
+    @staticmethod
+    def check_permissions(target, perm=755, fix=False):
+        correct = int(oct(stat.S_IMODE(os.stat(target).st_mode))[-3:]) == perm
+        if not correct and fix:
+            os.chmod(target, perm)
+        else:
+            return correct
+
+    @staticmethod
+    def filetype(filename, parser=lambda string: string.split('/')[-1]):
+        type_str = magic.from_file(filename, mime=True)
+        return parser(type_str)
+
+    @staticmethod
+    def parse_json(filename):
+        with open(filename, 'r') as fname:
+            loaded_file = fname.read()
+        file_dict = json.loads(loaded_file)
+        return file_dict
+
+    @staticmethod
+    def write_json(dict_to_encode, filename, separators=(',', ':')):
+        with open(filename, 'w') as fname:
+            fname.write(json.dumps(dict_to_encode, indent=2, separators=separators))
+
+    @staticmethod
+    def organize_dict(items, key, applicator=None):
+        sorted_dict = []
+        if applicator is None:
+            sorted_dict = sorted(items, key=lambda k: k[key])
+        return sorted_dict
