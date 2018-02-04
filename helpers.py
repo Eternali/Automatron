@@ -4,19 +4,51 @@ Helpers contains only static methods that ATO or custom modules can import.
 (C) Conrad Heidebrecht (github.com/eternali) 03 February 2018
 '''
 
+
+from enum import Enum
 import json
 import magic
 import os
 import stat
 
+from constants import *
+
+
+def v_logger(mode, body):
+    if VERBOSE:
+        Helpers.logger(mode, body)
+
 
 class Helpers():
+
+    class LOG_INFO():
+        def __init__(prefix, suffix, color):
+            self.prefix = prefix
+            self.suffix = suffix
+            self.color = color
+            self.reset = ''
+
+    class LOG_MODE(Enum):
+        INFO = LOG_INFO('[**] ', '.', COLORS.BLUE)
+        ERR = LOG_INFO('[!!]', '!', COLORS.RED)
+        PASS = LOG_INFO('[//]', '!', COLORS.GREEN)
+        OTHER = LOG_INFO('[~^]', '.', COLORS.PURPLE)
+
+    @staticmethod
+    def logger(mode, body):
+        if type(mode) is LOG_MODE:
+            print(mode.color + mode.prefix + body + mode.suffix + mode.reset)
+        else:
+            raise TypeError('Invalid log mode!')
 
     @staticmethod
     def check_permissions(target, perm=755, fix=False):
         correct = int(oct(stat.S_IMODE(os.stat(target).st_mode))[-3:]) == perm
         if not correct and fix:
-            os.chmod(target, perm)
+            if VERBOSE:
+
+            if not DRY_RUN:
+                os.chmod(target, perm)
         else:
             return correct
 

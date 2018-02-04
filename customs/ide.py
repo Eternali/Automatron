@@ -1,5 +1,10 @@
 '''
+Module for installing and setting up common ides whose install format is based on
+extracting a zipped archive and running the ide script with config saved to a directory
+(usually in a .`ide_name` folder in the user's home directory). 
+    e.g. Intellij based ides like Pycharm, Clion, Android Studio, and more...
 
+(C) Conrad Heidebrecht (github.com/eternali) 04 February 2018
 '''
 
 import os
@@ -8,8 +13,8 @@ import shutil
 import tarfile
 import zipfile
 
-from helpers import Helpers as h
 from constants import *
+from helpers import Helpers as h
 
 
 class Ide():
