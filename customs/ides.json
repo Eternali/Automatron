@@ -3,6 +3,7 @@
 	"install_base": "",
 	"ides": [
 		{
+			"name": "",
 			"archive_location": "",
 			"install_location": "",
 			"config_origin": "",

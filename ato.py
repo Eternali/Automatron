@@ -6,12 +6,13 @@
 #-----------PYTHON STANDARD IMPORTS----------
 from importlib import import_module
 import os
-import subprocess
+from subprocess import Popen, PIPE
 import sys
+from types import SimpleNamespace as Sn
 
 #-----------PACKAGE IMPORTS------------------
 from constants import *
-from helpers import Helpers as h, v_logger
+from helpers import Helpers as h, c_logger, v_logger
 
 
 #-----------HELPER FUNCTIONS-----------------
@@ -71,12 +72,8 @@ if __name__ == '__main__':
         VERBOSE = False
 
     packages, customs = get_named_args([('-p', '--packages'), ('-c', '--customs')])
-    print(packages)
-    print(customs)
-
 
     # execute common package installations
-
     for pack in packages:
         v_logger(h.LOG_MODE.INFO, 'Parsing {} {}..'.format(pack, PACKAGE_EXTENSION.strip('.').upper()))
         package = h.parse_json(PACKAGE_DIR + pack + PACKAGE_EXTENSION)
@@ -88,12 +85,19 @@ if __name__ == '__main__':
         for item in items:
             if "prereq" in item.keys():
                 v_logger(h.LOG_MODE.INFO, '{}: Executing prerequesites for {}..'.format(pack, item['name']))
-                if subprocess.Popen(' && '.join(item['prereq'])).wait() != 0:
-                    v_logger(h.LOG_MODE.ERR, '{}: Failed to execute prerequesites of {}'.format(pack, item['name']))
-                    raise Exception('Failed to execute prerequesites of {} from package {}'.format(item['name'], pack))
+                if DRY_RUN:
+                    h.logger(h.LOG_MODE.CMD, ' && '.join(items['prereq']))
+                else:
+                    prereq_params = ' && '.join(item['prereq'])
+                    if c_logger(Sn(stringify=lambda: prereq_params,
+                                   run=lambda: Popen(prereq_params).wait()), 0):
+                        v_logger(h.LOG_MODE.ERR, '{}: Failed to execute prerequesites of {}'.format(pack, item['name']))
+                        raise Exception('Failed to execute prerequesites of {} from package {}'.format(item['name'], pack))
         # execute final package installations
         v_logger(h.LOG_MODE.INFO, '{}: Installing all packages..'.format(pack))
-        if subprocess.Popen([install_cmd, dry_cmd if dry_run else ''] + [item['name'] for item in items]).wait() != 0:
+        install_params = [install_cmd, dry_cmd if DRY_RUN else ''] + [item['name'] for item in items]
+        if c_logger(Sn(stringify=lambda: ' '.join(install_params),
+                       run=lambda: Popen(install_params).wait()), 0):
             v_logger(h.LOG_MODE.ERR, '{}: Failed to install packages.'.format(pack))
             raise Exception('Failed to complete installation of {}.'.format(pack))
 

@@ -22,6 +22,7 @@ class COLORS(Enum):
     GREEN = ''
     BLUE = ''
     PURPLE = ''
+    CYAN = ''
 
 class FILETYPES(Enum):
     TGZ = ['gzip, tar.gz']

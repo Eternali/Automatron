@@ -14,6 +14,18 @@ import stat
 from constants import *
 
 
+# command logging for dry-run mode
+# cmd is an object that has a to_string method to print
+# and a run method to execute
+def c_logger(cmd, expected=0):
+    if DRY_RUN:
+        Helpers.logger(Helpers.LOG_MODE.CMD, cmd.stringify())
+        return expected
+    else:
+        return cmd.run() == expected
+
+
+# logger for verbose mode
 def v_logger(mode, body):
     if VERBOSE:
         Helpers.logger(mode, body)
@@ -30,9 +42,10 @@ class Helpers():
 
     class LOG_MODE(Enum):
         INFO = LOG_INFO('[**] ', '.', COLORS.BLUE)
-        ERR = LOG_INFO('[!!]', '!', COLORS.RED)
-        PASS = LOG_INFO('[//]', '!', COLORS.GREEN)
-        OTHER = LOG_INFO('[~^]', '.', COLORS.PURPLE)
+        ERR = LOG_INFO('[!!] ', '!', COLORS.RED)
+        PASS = LOG_INFO('[//] ', '!', COLORS.GREEN)
+        CMD = LOG_INFO('[$$] ', ';', COLORS.PURPLE)
+        OTHER = LOG_INFO('[~^] ', '.', COLORS.CYAN)
 
     @staticmethod
     def logger(mode, body):
