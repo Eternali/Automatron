@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 '''
 
+(C) Conrad Heidebrecht (github.com/eternali) 06 Feb 2018
+
 '''
 
 #-----------PYTHON STANDARD IMPORTS----------
