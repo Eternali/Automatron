@@ -24,7 +24,7 @@ class PyParser():
         if not os.path.isfile(filename):
             return False
         
-        with open(filename, 'rb') as f:
+        with open(filename, 'r') as f:
             for l in f:
                 line = l.rstrip(os.linesep).strip('\t')
                 if len(line) < 2 or '=' not in line or line.startswith('#'):
@@ -32,19 +32,60 @@ class PyParser():
                 line = line.split('=', 1)
                 key = line[0].strip()
                 value = line[1].strip() if len(line) > 1 else ''
-                self.parse_prop(self.__properties__, key.split('.'), value)
+                self.__parse_prop(self.__properties__, key.split('.'), value)
         
         return True
 
-    def parse_prop(self, props, keys, value):
+    def __parse_prop(self, props, keys, value):
         if keys[0] in props.keys():
-            self.parse_prop(props[keys[0]], keys[1:], value)
+            self.__parse_prop(props[keys[0]], keys[1:], value)
         elif len(keys) > 1:
             props[keys[0]] = {}
-            self.parse_prop(props[keys[0]], keys[1:], value)
+            self.__parse_prop(props[keys[0]], keys[1:], value)
         else:
             props[keys[0]] = value
 
-    def save_props(self, filename):
-        pass
+    def save(self, filename):
+        filename = (os.getcwd() + '/' if not filename.startswith('/') else '') + filename
+        if not os.path.exists(filename.rsplit('/', 1)[0]):
+            os.makedirs(filename.rsplit('/', 1)[0])
+
+        with open(filename, 'w+') as f:
+            compiled = []
+            self.__build(self.__properties__, '', compiled)
+            f.write('\n'.join(compiled))
+
+    def __build(self, prop, cur_line, compiled):
+        if isinstance(prop, dict):
+            for key in prop.keys():
+                self.__build(prop[key], cur_line + ('.' if cur_line else '') + str(key), compiled)
+        else:
+            compiled.append(cur_line + '=' + prop)
+        
+
+#{
+#    'lol': {
+#        'asdf': 'me',
+#        'fdsa': 'you
+#    }
+#}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
