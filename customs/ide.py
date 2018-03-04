@@ -25,7 +25,7 @@ class Ide():
 
     def run(self):
         v_logger(h.LOG_MODE.INFO, 'Parsing IDEs..')
-        ide_settings  = h.parse_json(self.config_location)
+        ide_settings = h.parse_json(self.config_location)
         custom_base = custom['custom_base']
         install_base = subarchive['install_base']
         
