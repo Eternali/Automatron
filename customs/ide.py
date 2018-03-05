@@ -10,9 +10,12 @@ extracting a zipped archive and running the ide script with config saved to a di
 import os
 from subprocess import Popen, PIPE
 import shutil
+import sys
 import tarfile
 from types import SimpleNamespace as Sn
 import zipfile
+
+sys.path.insert(0, '../')
 
 from constants import *
 from helpers import Helpers as h, c_logger, v_logger
@@ -20,14 +23,14 @@ from helpers import Helpers as h, c_logger, v_logger
 
 class Ide():
 
-    def __init__(self, config_location="ides"+PACKAGE_EXTENSION):
+    def __init__(self, config_location="ide"+PACKAGE_EXTENSION):
         self.config_location = config_location
 
     def run(self):
         v_logger(h.LOG_MODE.INFO, 'Parsing IDEs..')
         ide_settings = h.parse_json(self.config_location)
         custom_base = custom['custom_base']
-        install_base = subarchive['install_base']
+        install_base = custom['install_base']
         
         for ide in ide_settings['ides']:
             # get application locations

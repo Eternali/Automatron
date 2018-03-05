@@ -16,6 +16,10 @@ VERBOSE = False
 PACKAGE_DIR = 'packages/'
 CUSTOM_DIR = 'customs.'
 PACKAGE_EXTENSION = '.json'
+SUPPORTED_PROTOCOLS = [
+    'http',
+    'https'
+]
 
 class COLORS(Enum):
     RED = ''

@@ -1,3 +1,11 @@
 {
-    
+    "local_base": "",
+    "download_base": "",
+    "install_cmd": "dpkg -i",
+    "debs": [
+        {
+            "name": "vscode",
+            "source": "https://az764295.vo.msecnd.net/stable/f88bbf9137d24d36d968ea6b2911786bfe103002/code_1.20.1-1518535978_amd64.deb"
+        }
+    ]
 }
