@@ -21,7 +21,31 @@ from helpers import Helpers as h, c_logger, v_logger
 
 def usage():
     print('''
-        ./ato.py [-p --packages] pack1 pack2 [-c --customs] custom1:install_module1 custom2:install_module2
+        Automatron is an extensible script that is meant to simplify the setup of new linux machines.
+        It provides an interface to which automate the installation of files such as debian, npm, or pip packages,
+        as well as more complex and customizable applications such as IDE's.
+
+        Several modules are provided with Automatron, these include modules for installing 
+        apt, pip and npm packages with several sample packages configured for install.
+        It is intended that the user provide additional modules as they need,
+        the format of each additional module must be as follows:
+
+        - a python file containing a single class that is the name of the module
+            (the name of the file must match the lowercase name of the class)
+
+
+        ./ato.py [modules] [-d --dry-run] [-v --verbose] [-h --help]
+
+            [modules]        A space separated list of modules to configure,
+                             entries consist of either a path to a specific module (*.py),
+                             or a path to a directory containing one or more modules
+            [-d --dry-run]  Only log commands instead of actually running them,
+                            modules must specify their own dry run processes,
+                            in addition to the basic core command logging one provided by ato.py
+                                e.g. A 'apt' module might additionally specify that each package install command
+                                should be completed with the '--dry-run' option to simulate installation
+            [-v --verbose]  Log extra commands and display additional information
+            [-h --help]     Show this help
 
             [-p --packages]  install packages from common package managers (e.g. apt, pacman, pip, npm)
             [-c --customs]   install custom items from archives or other sources. The first item is the JSON
