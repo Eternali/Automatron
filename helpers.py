@@ -1,7 +1,7 @@
 '''
-Helpers contains only static methods that ATO or custom modules can import.
+Helpers contains helper classes and methods that ATO or custom modules can import.
 
-(C) Conrad Heidebrecht (github.com/eternali) 03 February 2018
+(C) Conrad Heidebrecht (github.com/eternali) 07 March 2018
 '''
 
 
@@ -11,62 +11,77 @@ import magic
 import os
 import stat
 
-from constants import *
+from config import *
 
 
-# command logging for dry-run mode
-# cmd is an object that has a to_string method to print
-# and a run method to execute
-def c_logger(cmd, expected=0):
-    if DRY_RUN:
-        Helpers.logger(Helpers.LOG_MODE.CMD, cmd.stringify())
-        return expected
-    else:
-        return cmd.run() == expected
+# Command class for executing loggable commands
+# if you want to log commands for debug, dry-run, or verbosity purposes, use this class
+# 'run' is the expression/function to execute and 'str' is the string to print out
+class Command():
+    __slots__ = ['run', 'stringify']
 
-
-# logger for verbose mode
-def v_logger(mode, body):
-    if VERBOSE:
-        Helpers.logger(mode, body)
+    def __init__(self, run, stringify):
+        self.run = run
+        self.stringify = stringify
 
 
 class Helpers():
 
     class LOG_INFO():
-        def __init__(prefix, suffix, color):
+        def __init__(self, prefix, suffix, color):
             self.prefix = prefix
             self.suffix = suffix
             self.color = color
             self.reset = ''
 
     class LOG_MODE(Enum):
-        INFO = LOG_INFO('[**] ', '.', COLORS.BLUE)
-        ERR = LOG_INFO('[!!] ', '!', COLORS.RED)
-        PASS = LOG_INFO('[//] ', '!', COLORS.GREEN)
-        CMD = LOG_INFO('[$$] ', ';', COLORS.PURPLE)
-        OTHER = LOG_INFO('[~^] ', '.', COLORS.CYAN)
+        INFO = Helpers.LOG_INFO('[**] ', '.', COLORS.BLUE)
+        ERR = Helpers.LOG_INFO('[!!] ', '!', COLORS.RED)
+        PASS = Helpers.LOG_INFO('[//] ', '!', COLORS.GREEN)
+        CMD = Helpers.LOG_INFO('[$$] ', ';', COLORS.PURPLE)
+        OTHER = Helpers.LOG_INFO('[~^] ', '.', COLORS.CYAN)
 
     @staticmethod
     def logger(mode, body):
-        if type(mode) is LOG_MODE:
+        if type(mode) is Helpers.LOG_MODE:
             print(mode.color + mode.prefix + body + mode.suffix + mode.reset)
         else:
             raise TypeError('Invalid log mode!')
 
+    # command logging for dry-run mode
+    # cmd must be an instance of Command
+    @staticmethod
+    def c_logger(cmd, expected=0):
+        if type(cmd) is Command:
+            if DRY_RUN:
+                Helpers.logger(Helpers.LOG_MODE.CMD, cmd.str)
+                return expected
+            else:
+                return cmd.run() == expected
+        else:
+            raise TypeError('Cmd not of type Command')
+
+    # logger for verbose mode
+    @staticmethod
+    def v_logger(mode, body):
+        if VERBOSE:
+            Helpers.logger(mode, body)
+
     @staticmethod
     def check_permissions(target, perm=755, fix=False):
         correct = int(oct(stat.S_IMODE(os.stat(target).st_mode))[-3:]) == perm
-        if not correct and fix:
-            if VERBOSE:
+        if not correct:
+            if fix:
+                Helpers.v_logger(Helpers.LOG_MODE.INFO, target + ' does not have target permissions of ' + perm + ', fixing.')
+                return Helpers.c_logger(Command(lambda: os.chmod(target, perm), 'os.chmod(%s, %i)' % (target, perm)))
+            else:
+                Helpers.v_logger(Helpers.LOG_MODE.ERR, target + ' does not have target permissions of ' + perm + ', not fixing.')
+                return True
 
-            if not DRY_RUN:
-                os.chmod(target, perm)
-        else:
-            return correct
+        return correct
 
     @staticmethod
-    def filetype(filename, parser=lambda string: string.split('/')[-1]):
+    def filetype(filename, parser=lambda string: string.split(os.sep)[-1]):
         type_str = magic.from_file(filename, mime=True)
         return parser(type_str)
 

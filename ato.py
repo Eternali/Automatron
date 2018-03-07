@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 '''
 
-(C) Conrad Heidebrecht (github.com/eternali) 06 Feb 2018
+(C) Conrad Heidebrecht (github.com/eternali) 07 March 2018
 
 '''
 
@@ -10,10 +10,9 @@ from importlib import import_module
 import os
 from subprocess import Popen, PIPE
 import sys
-from types import SimpleNamespace as Sn
 
 #-----------PACKAGE IMPORTS------------------
-from constants import *
+from config import *
 from helpers import Helpers as h, c_logger, v_logger
 
 

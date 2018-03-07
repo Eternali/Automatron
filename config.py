@@ -1,5 +1,5 @@
 '''
-Globals contains global constants for ATO and custom modules
+Contains global constants and configuration for ATO and custom modules
 This does not contain any methods (all methods should go in helpers.py)
 
 (C) Conrad Heidebrecht (github.com/eternali) 03 February 2018
