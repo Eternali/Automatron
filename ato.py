@@ -40,8 +40,8 @@ the format of each additional module must be as follows:
     a. JSON files are used to store module-wide configuration and a list of packages to install and/or setup
     b. Package archives and/or configuration to install are either stored in a separate data directory,
         or a remote location.
-    b. Parse configuration and packages from JSON file(s)
-    c. Loop through each package and install it using module and package specific configuration.
+    c. Parse configuration and packages from JSON file(s)
+    d. Loop through each package and install it using module and package specific configuration.
 
 
 ./ato.py [modules] [-d --dry-run] [-v --verbose] [-h --help]
