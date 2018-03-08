@@ -21,17 +21,29 @@ from helpers import Helpers as h, c_logger, v_logger
 
 def usage():
     print('''
-        Automatron is an extensible script that is meant to simplify the setup of new linux machines.
-        It provides an interface to which automate the installation of files such as debian, npm, or pip packages,
-        as well as more complex and customizable applications such as IDE's.
 
-        Several modules are provided with Automatron, these include modules for installing 
+        Automatron is an extensible script that is meant to simplify the setup of new linux machines.
+        It provides an interface to automate the installation of files such as debian, npm, or pip packages,
+        as well as more complex and customizable applications such as IDE's and any number of other groups
+        of packages that share installation features.
+
+        Several modules are provided with Automatron by default, these include modules for installing 
         apt, pip and npm packages with several sample packages configured for install.
         It is intended that the user provide additional modules as they need,
         the format of each additional module must be as follows:
 
-        - a python file containing a single class that is the name of the module
-            (the name of the file must match the lowercase name of the class)
+        - a python file containing a single class (the name of the module)
+            - the name of the file must match the lowercase name of the class
+            - the only requirements of the class are that it has a run method
+            - though not a requirement, it is recommended that each module contain one or more JSON file(s)
+              to store configuration and data.
+            - Note: 
+            - though not a requirement, it is recommended that modules follow the following structure:
+                a. JSON files are used to store module-wide configuration and a list of packages to install and/or setup
+                b. Package archives and/or configuration to install are either stored in a separate data directory,
+                   or a remote location.
+                b. Parse configuration and packages from JSON file(s)
+                c. Loop through each package and install it using module and package specific configuration.
 
 
         ./ato.py [modules] [-d --dry-run] [-v --verbose] [-h --help]
@@ -47,13 +59,6 @@ def usage():
             [-v --verbose]  Log extra commands and display additional information
             [-h --help]     Show this help
 
-            [-p --packages]  install packages from common package managers (e.g. apt, pacman, pip, npm)
-            [-c --customs]   install custom items from archives or other sources. The first item is the JSON
-                             file that specifies things like archive locations, configuration, and other data
-                             for the install. The second item is a python module you must provide to parse the 
-                             JSON file you provide.
-                             The python module must be a single class with the same name as the file and must
-                             contain a `run` method that will be called by ATO.
         ''')
 
 
