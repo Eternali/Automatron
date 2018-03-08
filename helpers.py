@@ -71,6 +71,11 @@ class Helpers():
         if self.verbose:
             self.logger(mode, body)
 
+    # log progress
+    # progress is a floating point value between 0 and 100 (percentage)
+    def p_logger(self, progress):
+        print()
+
     def check_perms(self, target, perm=755, fix=False):
         correct = int(oct(stat.S_IMODE(os.stat(target).st_mode))[-3:]) == perm
         if not correct:

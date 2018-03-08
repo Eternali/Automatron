@@ -89,7 +89,7 @@ def parse_args(args):
     def in_args(flags):
         return any([f in args for f in flags])
 
-    if in_args(['-h', '--help']):
+    if in_args(['-h', '--help']) or len(args) < 1:
         usage()
         quit(0)
 
