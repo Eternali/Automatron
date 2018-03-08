@@ -9,10 +9,6 @@ This does not contain any methods (all methods should go in helpers.py)
 from enum import Enum
 
 
-# these are the only values that can be changed by commandline arguments
-DRY_RUN = False
-VERBOSE = False
-
 PACKAGE_DIR = 'packages/'
 CUSTOM_DIR = 'customs.'
 PACKAGE_EXTENSION = '.json'

@@ -11,7 +11,7 @@ import magic
 import os
 import stat
 
-from config import *
+import config as c
 
 
 # Command class for executing loggable commands
@@ -25,36 +25,41 @@ class Command():
         self.stringify = stringify
 
 
+class LOG_INFO():
+    def __init__(self, prefix, suffix, color):
+        self.prefix = prefix
+        self.suffix = suffix
+        self.color = color
+        self.reset = ''
+
+
+class LOG_MODE(Enum):
+    INFO = LOG_INFO('[**] ', '.', c.COLORS.BLUE)
+    ERR = LOG_INFO('[!!] ', '!', c.COLORS.RED)
+    PASS = LOG_INFO('[//] ', '!', c.COLORS.GREEN)
+    CMD = LOG_INFO('[$$] ', ';', c.COLORS.PURPLE)
+    OTHER = LOG_INFO('[~^] ', '.', c.COLORS.CYAN)
+
+
 class Helpers():
+    
+    def __init__(self, dry_run=False, verbose=False):
+        self.dry_run = dry_run
+        self.verbose = verbose
 
-    class LOG_INFO():
-        def __init__(self, prefix, suffix, color):
-            self.prefix = prefix
-            self.suffix = suffix
-            self.color = color
-            self.reset = ''
-
-    class LOG_MODE(Enum):
-        INFO = Helpers.LOG_INFO('[**] ', '.', COLORS.BLUE)
-        ERR = Helpers.LOG_INFO('[!!] ', '!', COLORS.RED)
-        PASS = Helpers.LOG_INFO('[//] ', '!', COLORS.GREEN)
-        CMD = Helpers.LOG_INFO('[$$] ', ';', COLORS.PURPLE)
-        OTHER = Helpers.LOG_INFO('[~^] ', '.', COLORS.CYAN)
-
-    @staticmethod
-    def logger(mode, body):
-        if type(mode) is Helpers.LOG_MODE:
-            print(mode.color + mode.prefix + body + mode.suffix + mode.reset)
+    def logger(self, mode, body):
+        if type(mode) is LOG_MODE:
+            mode = mode.value
+            print(mode.color.value + mode.prefix + body + mode.suffix + mode.reset)
         else:
             raise TypeError('Invalid log mode!')
 
     # command logging for dry-run mode
     # cmd must be an instance of Command
-    @staticmethod
-    def c_logger(cmd, expected=0):
+    def c_logger(self, cmd, expected=0):
         if type(cmd) is Command:
-            if DRY_RUN:
-                Helpers.logger(Helpers.LOG_MODE.CMD, cmd.str)
+            if self.dry_run:
+                self.logger(LOG_MODE.CMD, cmd.stringify)
                 return expected
             else:
                 return cmd.run() == expected
@@ -62,20 +67,18 @@ class Helpers():
             raise TypeError('Cmd not of type Command')
 
     # logger for verbose mode
-    @staticmethod
-    def v_logger(mode, body):
-        if VERBOSE:
-            Helpers.logger(mode, body)
+    def v_logger(self, mode, body):
+        if self.verbose:
+            self.logger(mode, body)
 
-    @staticmethod
-    def check_permissions(target, perm=755, fix=False):
+    def check_perms(self, target, perm=755, fix=False):
         correct = int(oct(stat.S_IMODE(os.stat(target).st_mode))[-3:]) == perm
         if not correct:
             if fix:
-                Helpers.v_logger(Helpers.LOG_MODE.INFO, target + ' does not have target permissions of ' + perm + ', fixing.')
-                return Helpers.c_logger(Command(lambda: os.chmod(target, perm), 'os.chmod(%s, %i)' % (target, perm)))
+                self.v_logger(LOG_MODE.INFO, target + ' does not have target permissions of ' + perm + ', fixing.')
+                return self.c_logger(Command(lambda: os.chmod(target, perm), 'os.chmod(%s, %i)' % (target, perm)))
             else:
-                Helpers.v_logger(Helpers.LOG_MODE.ERR, target + ' does not have target permissions of ' + perm + ', not fixing.')
+                self.v_logger(LOG_MODE.ERR, target + ' does not have target permissions of ' + perm + ', not fixing.')
                 return True
 
         return correct
