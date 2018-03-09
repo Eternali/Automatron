@@ -9,14 +9,6 @@ This does not contain any methods (all methods should go in helpers.py)
 from enum import Enum
 
 
-PACKAGE_DIR = 'packages/'
-CUSTOM_DIR = 'customs.'
-PACKAGE_EXTENSION = '.json'
-SUPPORTED_PROTOCOLS = [
-    'http',
-    'https'
-]
-
 class COLORS(Enum):
     RED = ''
     GREEN = ''

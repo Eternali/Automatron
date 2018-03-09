@@ -66,6 +66,11 @@ class Helpers():
         else:
             raise TypeError('Cmd not of type Command')
 
+    # pretty print progress across bottom of screen
+    # progress is a float between 0 and 1 (percentage)
+    def p_logger(self, progress):
+        pass
+
     # logger for verbose mode
     def v_logger(self, mode, body):
         if self.verbose:
@@ -92,6 +97,21 @@ class Helpers():
     def filetype(filename, parser=lambda string: string.split(os.sep)[-1]):
         type_str = magic.from_file(filename, mime=True)
         return parser(type_str)
+
+    @staticmethod
+    def is_json(filename):
+        '''
+        Tests whether or not a file is JSON be checking first character
+        THIS DOES NOT CHECK THE VALIDITY OF THE FILE
+
+        :param filename (string): filename to check
+        :returns: boolean whether the file is JSON or not
+        '''
+        with open(filename, 'r') as fname:
+            for line in fname:
+                if line.startswith('{'):
+                    return True
+                
 
     @staticmethod
     def parse_json(filename):
