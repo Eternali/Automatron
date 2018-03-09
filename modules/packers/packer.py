@@ -5,16 +5,18 @@
 
 import os
 from subprocess import Popen, PIPE
+import sys
 
 # get abspath of this file and go two directories up and append it to sys path
 sys.path.append(os.path.abspath(__file__).rsplit(os.sep, 3)[0])
 
-from helpers import Helpers as H, Command as Cmd, LOG_MODE
+import config as c
 
 
 class Packer():
-    
-    def __init__(self):
+
+    def __init__(self, h):
+        self.h = h
         self.sources = [d for d in os.listdir(os.path.abspath(__file__).rsplit(os.sep, 1)[0]) if H.is_json(d)]
 
     def install(self, package, install_cmd, dry_cmd, packages=[]):
@@ -30,13 +32,13 @@ class Packer():
         if 'prereq' in package.keys():
             for prereq in package['prereq']:
                 Popen(prereq).wait()
-        
-        Popen([install_cmd if not self.dry_run else dry_cmd, package['name']]).wait()
+
+        Popen([all_cmd if not self.h.dry_run else dry_cmd, package['name']]).wait()
         package['completed'] = True
 
     def run(self, progress):
         for source in self.sources:
-            data = H.parse_json(source)
+            data = self.h.parse_json(source)
             # use get if the parameter is non essential (because it doesn't raise a KeyError)
             manager = data.get('package_manager', '')
             install_cmd = data['install_cmd']

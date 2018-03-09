@@ -32,10 +32,12 @@ the format of each additional module must be as follows:
 
 - a python file containing a single class (the name of the module)
 - the name of the file must match the lowercase name of the class.
-- the only requirements of the class are that it has a run method which takes
-    a single argument: the shared progress value to increment
+- the only requirements of the class are that:
+    a. it's constructor takes an instance of the Helpers class as its only parameter
+    b. it has a run method which takes the shared progress value (to increment) as
+       it's only parameter
 - Note: It is up to individual modules to know their location on the filesystem relative to Ato
-    (this is important if modules need to import configuration or helpers from Ato).
+    (this is important if modules need to import configuration from Ato).
 - though not a requirement, it is recommended that each module contain one or more JSON file(s)
     to store configuration and data.
 - though not a requirement, it is recommended that modules be placed in a subdirectory of Ato so as to
@@ -112,5 +114,5 @@ if __name__ == '__main__':
     for module in modules:
         h.logger(LOG_MODE.INFO, 'Loading module ' + module)
         importer = import_module(module)
-        loader = getattr(importer, module.split('.')[-1].capitalize())()
+        loader = getattr(importer, module.split('.')[-1].capitalize())(h)
         loader.run(progress)
