@@ -34,8 +34,12 @@ the format of each additional module must be as follows:
 - the name of the file must match the lowercase name of the class.
 - the only requirements of the class are that it has a run method which takes
     a single argument: the shared progress value to increment
+- Note: It is up to individual modules to know their location on the filesystem relative to Ato
+    (this is important if modules need to import configuration or helpers from Ato).
 - though not a requirement, it is recommended that each module contain one or more JSON file(s)
     to store configuration and data.
+- though not a requirement, it is recommended that modules be placed in a subdirectory of Ato so as to
+    enable easier use of the configuration and helpers provided by Ato.
 - though not a requirement, it is recommended that modules follow the following structure:
     a. JSON files are used to store module-wide configuration and a list of packages to install and/or setup
     b. Package archives and/or configuration to install are either stored in a separate data directory,
@@ -100,7 +104,7 @@ def parse_args(args):
 #-----------MAIN ENTRYPOINT------------------
 if __name__ == '__main__':
 
-    # progress value that can be passed to modules to increment
+    # overall progress value that can be passed to modules to increment
     progress = 0.0
 
     h, modules = parse_args(argv[1:])
@@ -110,54 +114,3 @@ if __name__ == '__main__':
         importer = import_module(module)
         loader = getattr(importer, module.split('.')[-1].capitalize())()
         loader.run(progress)
-
-    # # execute common package installations
-    # for pack in packages:
-    #     v_logger(h.LOG_MODE.INFO, 'Parsing {} {}..'.format(pack, PACKAGE_EXTENSION.strip('.').upper()))
-    #     package = h.parse_json(PACKAGE_DIR + pack + PACKAGE_EXTENSION)
-    #     manager, install_cmd, fix_cmd, items, dry_cmd = (package['package_manager'],
-    #                                                      package['install_cmd'],
-    #                                                      package['fix_cmd'] if 'fix_cmd' in package.keys() else None,
-    #                                                      package['packages'],
-    #                                                      package['dry_run'] if 'dry_run' in file_dict.keys() else '')
-    #     # execute prerequesites for package installs
-    #     for item in items:
-    #         if "prereq" in item.keys():
-    #             v_logger(h.LOG_MODE.INFO, '{}: Executing prerequesites for {}..'.format(pack, item['name']))
-    #             if DRY_RUN:
-    #                 h.logger(h.LOG_MODE.CMD, ' && '.join(items['prereq']))
-    #             else:
-    #                 prereq_params = ' && '.join(item['prereq'])
-    #                 if c_logger(Sn(stringify=lambda: prereq_params,
-    #                                run=lambda: Popen(prereq_params).wait()), 0):
-    #                     v_logger(h.LOG_MODE.ERR, '{}: Failed to execute prerequesites of {}'.format(pack, item['name']))
-    #                     raise Exception('Failed to execute prerequesites of {} from package {}'.format(item['name'], pack))
-    #         if "deps" in item.keys():
-    #             v_logger(h.LOG_MODE.INFO, '{}: Installing dependencies for {}..'.format(pack, item['name']))
-    #             deps_params = [install_cmd, dry_cmd if DRY_RUN else ''] + [dep for dep in item['deps']]
-    #             if not c_logger(Sn(stringify=lambda: ' '.join(deps_params),
-    #                            run=lambda: Popen(deps_params).wait()), 0):
-    #                 v_logger(h.LOG_MODE.ERR, '{}: Failed to install dependencies for {}.'.format(pack, item['name']))
-    #                 if not 'n' in input('Dependency installation failed, try to fix? [Y/n]: ').lower():
-    #                     if not c_logger(stringify=lambda: fix_cmd,
-    #                                     run=lambda: Popen(fix_cmd).wait(), 0):
-    #                         raise Exception('Failed to fix dependencies of {}.'.format(item['name']))
-    #                 else:
-    #                     raise Exception('Failed to install dependencies of {}.'.format(item['name']))
-    #     # execute final package installations
-    #     v_logger(h.LOG_MODE.INFO, '{}: Installing all packages..'.format(pack))
-    #     install_params = [install_cmd, dry_cmd if DRY_RUN else ''] + [item['name'] for item in items]
-    #     if not c_logger(Sn(stringify=lambda: ' '.join(install_params),
-    #                    run=lambda: Popen(install_params).wait()), 0):
-    #         v_logger(h.LOG_MODE.ERR, '{}: Failed to install packages.'.format(pack))
-    #         raise Exception('Failed to complete installation of {}.'.format(pack))
-
-
-    # # load and run custom modules
-    # for custom in customs:
-    #     v_logger(h.LOG_MODE.INFO, 'Loading module {}'.format(custom))
-    #     custom_mod = import_module(CUSTOM_DIR + custom)
-    #     Custom = getattr(custom_mod, custom.title())
-    #     c = Custom()
-    #     v_logger(h.LOG_MODE.INFO, 'Running module {}'.format(custom))
-    #     c.run()
