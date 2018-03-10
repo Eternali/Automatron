@@ -107,11 +107,13 @@ class Helpers():
         :param filename (string): filename to check
         :returns: boolean whether the file is JSON or not
         '''
-        with open(filename, 'r') as fname:
-            for line in fname:
-                if line.startswith('{'):
-                    return True
-                
+        if os.path.isfile(filename):
+            with open(filename, 'r') as fname:
+                for line in fname:
+                    if line.startswith('{'):
+                        return True
+        
+        return False
 
     @staticmethod
     def parse_json(filename):

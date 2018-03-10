@@ -1,7 +1,7 @@
 {
 	"package_manager": "apt",
 	"install_cmd": "apt install -y",
-	"dry_run": "--dry-run",
+	"dry_run": "apt install -y --dry-run",
 	"packages": [
 		{
 			"name": "apt-transport-https"

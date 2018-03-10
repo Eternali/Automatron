@@ -1,0 +1,9 @@
+{
+    "package_manager": "pip3",
+    "prereq": "apt install python3-pip",
+	"install_cmd": "pip3 install",
+    "dry_run": "echo",
+    "packages": [
+
+    ]
+}

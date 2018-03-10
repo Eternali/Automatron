@@ -1,0 +1,9 @@
+{
+    "package_manager": "npm",
+    "prereq": "",
+	"install_cmd": "npm i -g",
+    "dry_run": "echo",
+    "packages": [
+
+    ]
+}
