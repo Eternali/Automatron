@@ -14,34 +14,35 @@ import stat
 import config as c
 
 
-# Command class for executing loggable commands
-# if you want to log commands for debug, dry-run, or verbosity purposes, use this class
-# 'run' is the expression/function to execute and 'str' is the string to print out
-class Command():
-    __slots__ = ['run', 'stringify']
-
-    def __init__(self, run, stringify):
-        self.run = run
-        self.stringify = stringify
-
-
 class LOG_INFO():
     def __init__(self, prefix, suffix, color):
-        self.prefix = prefix
-        self.suffix = suffix
-        self.color = color
-        self.reset = ''
-
-
-class LOG_MODE(Enum):
-    INFO = LOG_INFO('[**] ', '.', c.COLORS.BLUE)
-    ERR = LOG_INFO('[!!] ', '!', c.COLORS.RED)
-    PASS = LOG_INFO('[//] ', '!', c.COLORS.GREEN)
-    CMD = LOG_INFO('[$$] ', ';', c.COLORS.PURPLE)
-    OTHER = LOG_INFO('[~^] ', '.', c.COLORS.CYAN)
+    self.prefix = prefix
+    self.suffix = suffix
+    self.color = color
+    self.reset = ''
 
 
 class Helpers():
+    
+    # Command class for executing loggable commands
+    # if you want to log commands for debug, dry-run, or verbosity purposes, use this class
+    # 'run' is the expression/function to execute and 'str' is the string to print out
+    class Command():
+        __slots__ = ['run', 'stringify', 'show_help']
+
+        def __init__(self, run, stringify, show_help=''):
+            self.run = run
+            self.stringify = stringify
+            self.show_help = show_help
+
+
+    class LOG_MODE(Enum):
+        INFO = LOG_INFO('[**] ', '.', c.COLORS.BLUE)
+        ERR = LOG_INFO('[!!] ', '!', c.COLORS.RED)
+        PASS = LOG_INFO('[//] ', '!', c.COLORS.GREEN)
+        CMD = LOG_INFO('[$$] ', ';', c.COLORS.PURPLE)
+        OTHER = LOG_INFO('[~^] ', '.', c.COLORS.CYAN)
+
     
     def __init__(self, dry_run=False, verbose=False):
         self.dry_run = dry_run

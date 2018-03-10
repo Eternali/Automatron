@@ -13,7 +13,7 @@ from sys import argv
 
 #-----------PACKAGE IMPORTS------------------
 import config as c
-from helpers import Helpers as H, Command as Cmd, LOG_MODE
+from helpers import Helpers as H
 
 
 #-----------HELPER FUNCTIONS-----------------
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     print(modules)
 
     for module in modules:
-        h.logger(LOG_MODE.INFO, 'Loading module ' + module)
+        h.logger(h.LOG_MODE.INFO, 'Loading module ' + module)
         importer = import_module(module)
         loader = getattr(importer, module.split('.')[-1].capitalize())(h)
         loader.run(progress, interactive)

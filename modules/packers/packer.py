@@ -20,8 +20,28 @@ class Packer():
         self.work_dir = os.path.abspath(__file__).rsplit(os.sep, 1)[0]
         self.sources = [self.work_dir + os.sep + d for d in os.listdir(self.work_dir) if self.h.is_json(self.work_dir + os.sep + d)]
 
+        self.commands: list
+
+    def init_interactive(self):
+        self.h.logger(self.h.LOG_MODE.INFO, 'Packer: Entering interactive prompt.')
+        self.commands = [
+            self.h.Cmd(
+                lambda manager, package: pass,
+                lambda: 'add',
+                lambda: 'add package_manager package\n\tpackage_manager the package manager to add the command to\n\tpackage        JSON object to add to packages '
+            )
+        ]
+
     def configure(self):
-        
+        self.init_interactive()
+        while True:
+            name, args, is_help = input('>> ').split(' ')
+            cmd = [c for c in self.commands if c.stringify() == name][0]
+            if args[0].lower().strip() == 'help':
+                cmd.show_help()
+            else:
+                cmd.run(*args)
+            
 
     def install(self, package, install_cmd, dry_cmd, packages=[]):
         if package.get('completed'):
