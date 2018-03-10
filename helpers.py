@@ -126,7 +126,7 @@ class Helpers():
     @staticmethod
     def write_json(dict_to_encode, filename, separators=(',', ':')):
         with open(filename, 'w') as fname:
-            fname.write(json.dumps(dict_to_encode, indent=2, separators=separators))
+            fname.write(json.dumps(dict_to_encode, indent=4, separators=separators))
 
     @staticmethod
     def organize_dict(items, key, applicator=None):
