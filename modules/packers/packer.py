@@ -35,9 +35,9 @@ class Packer():
     def configure(self):
         self.init_interactive()
         while True:
-            name, args, is_help = input('>> ').split(' ')
+            name, args = input('>> ').split(' ')
             cmd = [c for c in self.commands if c.stringify() == name][0]
-            if args[0].lower().strip() == 'help':
+            if args[-1].lower().strip() == 'help':
                 cmd.show_help()
             else:
                 cmd.run(*args)
